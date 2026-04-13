@@ -1,0 +1,394 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: Smart Agriculture AI API
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: predictions
+    description: AI Crop and Yield Predictions
+  - name: crops
+    description: Crop data and statistics
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      description: Returns server health status
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /predict-crop:
+    post:
+      operationId: predictCrop
+      tags: [predictions]
+      summary: Predict recommended crop
+      description: Uses soil and weather parameters to recommend the best crop
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PredictionInput"
+      responses:
+        "200":
+          description: Crop prediction result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CropPrediction"
+
+  /predict-yield:
+    post:
+      operationId: predictYield
+      tags: [predictions]
+      summary: Predict crop yield
+      description: Predicts the expected yield for a given crop and conditions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/YieldInput"
+      responses:
+        "200":
+          description: Yield prediction result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/YieldPrediction"
+
+  /prediction-history:
+    get:
+      operationId: getPredictionHistory
+      tags: [predictions]
+      summary: Get prediction history
+      description: Returns list of past predictions
+      responses:
+        "200":
+          description: List of past predictions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PredictionRecord"
+
+  /crops:
+    get:
+      operationId: listCrops
+      tags: [crops]
+      summary: List all supported crops
+      description: Returns all crops the system can recommend
+      responses:
+        "200":
+          description: List of crops
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Crop"
+
+  /crop-stats:
+    get:
+      operationId: getCropStats
+      tags: [crops]
+      summary: Get crop prediction statistics
+      description: Returns aggregated stats about past predictions for dashboard
+      responses:
+        "200":
+          description: Crop statistics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CropStats"
+
+  /model-accuracy:
+    get:
+      operationId: getModelAccuracy
+      tags: [predictions]
+      summary: Get model accuracy metrics
+      description: Returns accuracy metrics for the AI models
+      responses:
+        "200":
+          description: Model accuracy data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ModelAccuracy"
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+
+    PredictionInput:
+      type: object
+      properties:
+        nitrogen:
+          type: number
+          description: Nitrogen content in soil (kg/ha)
+        phosphorus:
+          type: number
+          description: Phosphorus content in soil (kg/ha)
+        potassium:
+          type: number
+          description: Potassium content in soil (kg/ha)
+        temperature:
+          type: number
+          description: Temperature in Celsius
+        humidity:
+          type: number
+          description: Relative humidity percentage
+        rainfall:
+          type: number
+          description: Rainfall in mm
+        ph:
+          type: number
+          description: Soil pH level
+      required:
+        - nitrogen
+        - phosphorus
+        - potassium
+        - temperature
+        - humidity
+        - rainfall
+        - ph
+
+    CropPrediction:
+      type: object
+      properties:
+        crop:
+          type: string
+        confidence:
+          type: number
+        alternatives:
+          type: array
+          items:
+            type: object
+            properties:
+              crop:
+                type: string
+              confidence:
+                type: number
+            required:
+              - crop
+              - confidence
+        reasoning:
+          type: string
+        season:
+          type: string
+      required:
+        - crop
+        - confidence
+        - alternatives
+        - reasoning
+        - season
+
+    YieldInput:
+      type: object
+      properties:
+        crop:
+          type: string
+        nitrogen:
+          type: number
+        phosphorus:
+          type: number
+        potassium:
+          type: number
+        temperature:
+          type: number
+        humidity:
+          type: number
+        rainfall:
+          type: number
+        ph:
+          type: number
+        area:
+          type: number
+          description: Area in hectares
+      required:
+        - crop
+        - nitrogen
+        - phosphorus
+        - potassium
+        - temperature
+        - humidity
+        - rainfall
+        - ph
+        - area
+
+    YieldPrediction:
+      type: object
+      properties:
+        yield:
+          type: number
+          description: Expected yield in kg/ha
+        totalYield:
+          type: number
+          description: Total expected yield for given area in kg
+        unit:
+          type: string
+        grade:
+          type: string
+          description: Quality grade (Excellent/Good/Average/Poor)
+        yieldTrend:
+          type: array
+          items:
+            type: object
+            properties:
+              month:
+                type: string
+              value:
+                type: number
+            required:
+              - month
+              - value
+      required:
+        - yield
+        - totalYield
+        - unit
+        - grade
+        - yieldTrend
+
+    PredictionRecord:
+      type: object
+      properties:
+        id:
+          type: integer
+        crop:
+          type: string
+        confidence:
+          type: number
+        yield:
+          type: number
+        grade:
+          type: string
+        nitrogen:
+          type: number
+        phosphorus:
+          type: number
+        potassium:
+          type: number
+        temperature:
+          type: number
+        humidity:
+          type: number
+        rainfall:
+          type: number
+        ph:
+          type: number
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - crop
+        - confidence
+        - yield
+        - grade
+        - nitrogen
+        - phosphorus
+        - potassium
+        - temperature
+        - humidity
+        - rainfall
+        - ph
+        - createdAt
+
+    Crop:
+      type: object
+      properties:
+        name:
+          type: string
+        season:
+          type: string
+        optimalPh:
+          type: string
+        waterRequirement:
+          type: string
+        description:
+          type: string
+      required:
+        - name
+        - season
+        - optimalPh
+        - waterRequirement
+        - description
+
+    CropStats:
+      type: object
+      properties:
+        totalPredictions:
+          type: integer
+        topCrops:
+          type: array
+          items:
+            type: object
+            properties:
+              crop:
+                type: string
+              count:
+                type: integer
+              avgYield:
+                type: number
+            required:
+              - crop
+              - count
+              - avgYield
+        avgConfidence:
+          type: number
+        recentActivity:
+          type: array
+          items:
+            type: object
+            properties:
+              date:
+                type: string
+              count:
+                type: integer
+            required:
+              - date
+              - count
+      required:
+        - totalPredictions
+        - topCrops
+        - avgConfidence
+        - recentActivity
+
+    ModelAccuracy:
+      type: object
+      properties:
+        cropModelAccuracy:
+          type: number
+        yieldModelRmse:
+          type: number
+        cropModelF1:
+          type: number
+        trainingDataSize:
+          type: integer
+        lastUpdated:
+          type: string
+      required:
+        - cropModelAccuracy
+        - yieldModelRmse
+        - cropModelF1
+        - trainingDataSize
+        - lastUpdated
