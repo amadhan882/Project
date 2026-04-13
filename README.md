@@ -350,6 +350,8 @@ The system supports **22 crops** across all major categories:
 ---
 
 
-## 📜 License
+### Credits
 
-This project is for academic purposes. All rights reserved © 2025.
+- Developed by Madhan Alagarsamy
+- Security Researcher
+- GitHub: https://github.com/amadhan882
