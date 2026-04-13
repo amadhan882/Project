@@ -349,12 +349,6 @@ The system supports **22 crops** across all major categories:
 
 ---
 
-## 👨‍💻 Author
-
-**Amadhan** — MCA Final Year Project  
-GitHub: [@amadhan882](https://github.com/amadhan882)
-
----
 
 ## 📜 License
 
