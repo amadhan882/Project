@@ -166,8 +166,8 @@ Make sure you have the following installed:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/amadhan882/Project.git
-cd Project/Smart-Agri-AI-System
+git clone https://github.com/amadhan882/Smart-Agri-AI-System.git
+cd Smart-Agri-AI-System
 ```
 
 ### 2. Install Dependencies
